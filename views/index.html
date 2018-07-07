@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">  
+    <title>SQL Diagram</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.css">
+    <style>
+      html, body  {
+        margin: 0;
+        padding: 0;
+      }
+      #container {
+        height: 100vh;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.js"></script>
+    <script type="text/javascript">
+      // create an array with nodes
+      var nodes = new vis.DataSet(<%- tables %>);
+      var edges = new vis.DataSet(<%- relationships %>);
+      // var edges = new vis.DataSet();
+      // create a network
+      var network = new vis.Network(
+        document.getElementById('container'), 
+        { nodes, edges },
+        {
+          nodes: {
+            shape: 'square',
+            shapeProperties: {
+              borderRadius: 0
+            }
+          }
+        }
+      );
+    </script>
+  </body>
+</html>
