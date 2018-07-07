@@ -1,12 +1,18 @@
-## Schema to Diagram
+# Schema to Diagram
 
-This project attempts to solve the task of getting an SQL diagram from an existing schema using:
+This project attempts to solve the task of getting an SQL diagram from an existing schema.
+
+## Under the hood
 
 [**pg-structure**](http://www.pg-structure.com/): Library for retrieve schemas from postgres.
 
 [**express**](https://expressjs.com/): Server Framework. It is responsible to connect to your database and retrieve the schema using the library mentioned above.
 
 [**visjs**](http://visjs.org/): Library for visualization. Used for render tables and relationships (diagram itself).
+
+## Limitations
+
+For now, only works with postgres databases.
 
 ## How to deploy
 
