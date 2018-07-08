@@ -12,7 +12,7 @@ app.post('/json', async (req, res) => {
     return res.json(schema.getStructure());
   } catch (error) {
     console.log(error);
-    return res.status(500).send(`${error}`);   
+    return res.status(500).send(`${error}`);
   }
 });
 
@@ -41,9 +41,9 @@ app.get('/', async (req, res) => {
     const relationships = schema.tables.map(table => table.constraints
       .filter(constraint => constraint.type === "FOREIGN KEY")
       .map(constraint => ({ from: table.name, to: constraint.parent.split('.').pop() })))
-      .reduce((accumulator, currentValue) => accumulator.concat(currentValue));
+      .reduce((accumulator, currentValue) => accumulator.concat(currentValue), []);
     // render
-    return res.render('index', { 
+    return res.render('index', {
       tables: JSON.stringify(tables),
       relationships: JSON.stringify(relationships)
     });
