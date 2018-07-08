@@ -8,7 +8,7 @@ This project attempts to solve the task of getting an SQL diagram from an existi
 
 [**express**](https://expressjs.com/): Server Framework. It is responsible to connect to your database and retrieve the schema using the library mentioned above.
 
-[**visjs**](http://visjs.org/): Library for visualization. Used for render tables and relationships (diagram itself).
+[**gojs**](https://gojs.net/): Library for visualization. Used for render tables and relationships (diagram itself).
 
 ## Limitations
 
