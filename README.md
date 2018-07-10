@@ -2,6 +2,49 @@
 
 This project attempts to solve the task of getting an SQL diagram from an existing schema.
 
+## Demo Screenshots
+
+![Alt text](/screenshots/1.png)
+![Alt text](/screenshots/2.png)
+
+## How to use
+
+### Install dependencies
+
+`npm i`
+
+### Run Server
+
+`npm start`
+
+### Making Request
+
+`POST http://localhost:3000/html` and pass as json body:
+
+```json
+{
+  "host": "DB_HOST_HERE",
+  "port": "DB_PORT_HERE",
+  "password": "DB_PASSWORD_HERE",
+  "user": "DB_USER_HERE",
+  "database": "DB_NAME_HERE",
+  "schemas": "DB_SCHEMAS_HERE",
+}
+```
+
+Defaults values are:
+
+```js
+{
+  host: '0.0.0.0',
+  port: '5432',
+  user: 'postgres',
+  schemas: ['public'],
+  database: 'postgres',
+  password: 'example',
+}
+```
+
 ## Under the hood
 
 [**pg-structure**](http://www.pg-structure.com/): Library for retrieve schemas from postgres.
@@ -13,16 +56,6 @@ This project attempts to solve the task of getting an SQL diagram from an existi
 ## Limitations
 
 For now, only works with postgres databases.
-
-## How to deploy
-
-### Install dependencies
-
-`npm i`
-
-### Run Server
-
-`npm start`
 
 ## How to contribute
 
