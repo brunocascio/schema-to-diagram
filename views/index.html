@@ -8,7 +8,7 @@
       body {
         overflow: hidden;
       }
-      #myDiagramDiv {
+      #diagram {
         height: 100vh !important;
       }
     </style>
@@ -19,84 +19,92 @@
     <% } %>
     <script id="code">
       function init() {
-        if (window.goSamples) goSamples();  // init for these samples -- you don't need to call this
+        // highlight all Links and Nodes coming out of a given Node
+        function showConnections(e, node) {
+          var diagram = node.diagram;
+          diagram.startTransaction("highlight");
+          // remove any previous highlighting
+          diagram.clearHighlighteds();
+          // for each Link coming out of the Node, set Link.isHighlighted
+          node.findLinksOutOf().each(function (l) { l.isHighlighted = true; });
+          diagram.commitTransaction("highlight");
+        }
+
         var $ = go.GraphObject.make;  // for conciseness in defining templates
 
-        myDiagram =
-          $(go.Diagram, "myDiagramDiv",  // must name or refer to the DIV HTML element
-            {
-              initialContentAlignment: go.Spot.Center,
-              allowDelete: false,
-              allowCopy: false,
-              layout: $(go.LayeredDigraphLayout, {
-                direction: 90,
-                layerSpacing: 25,
-                columnSpacing: 25
-              }),
-              "undoManager.isEnabled": true
-            });
+        diagram = $(go.Diagram, "diagram", {
+          initialContentAlignment: go.Spot.Center,
+          allowDelete: false,
+          allowCopy: false,
+          layout: $(go.LayeredDigraphLayout, {
+            direction: 90,
+            layerSpacing: 25,
+            columnSpacing: 25
+          }),
+          "undoManager.isEnabled": true
+        });
 
         // the template for each attribute in a node's array of item data
-        var itemTempl =
-          $(go.Panel, "Horizontal",
-            $(go.Shape,
-              { desiredSize: new go.Size(10, 10) },
-              new go.Binding("figure", "figure"),
-              new go.Binding("fill", "color")),
-            $(go.TextBlock,
-              { stroke: "#333333",
-                font: "bold 14px sans-serif" },
-              new go.Binding("text", "name"))
+        var itemTempl = $(go.Panel, "Horizontal",
+          $(go.Shape,
+            { desiredSize: new go.Size(10, 10) },
+            new go.Binding("figure", "figure"),
+            new go.Binding("fill", "color")),
+          $(go.TextBlock,
+            { stroke: "#333333",
+              font: "bold 14px sans-serif" },
+            new go.Binding("text", "name"))
           );
 
         // define the Node template, representing an entity
-        myDiagram.nodeTemplate =
-          $(go.Node, "Auto",  // the whole node panel
-            { selectionAdorned: true,
-              resizable: true,
-              layoutConditions: go.Part.LayoutStandard & ~go.Part.LayoutNodeSized,
-              fromSpot: go.Spot.AllSides,
-              toSpot: go.Spot.AllSides,
-              isShadowed: false,
-              shadowColor: "#C5C1AA"
-            },
-            new go.Binding("location", "location").makeTwoWay(),
-            // whenever the PanelExpanderButton changes the visible property of the "LIST" panel,
-            // clear out any desiredSize set by the ResizingTool.
-            new go.Binding("desiredSize", "visible", function(v) { return new go.Size(NaN, NaN); }).ofObject("LIST"),
-            // define the node's outer shape, which will surround the Table
-            $(go.Shape, "Rectangle", { fill: '#f6f6f6', stroke: "#756875", strokeWidth: 1 }),
-            $(go.Panel, "Table",
-              { margin: 10, stretch: go.GraphObject.Fill },
-              $(go.RowColumnDefinition, { row: 0, sizing: go.RowColumnDefinition.None }),
-              // the table header
-              $(go.TextBlock,
-                {
-                  row: 0, alignment: go.Spot.Center,
-                  margin: new go.Margin(0, 14, 8, 2),  // leave room for Button
-                  font: "bold 16px sans-serif"
-                },
-                new go.Binding("text", "key")),
-              // the collapse/expand button
-              $("PanelExpanderButton", "LIST",  // the name of the element whose visibility this button toggles
-                { row: 0, alignment: go.Spot.TopRight }),
-              // the list of Panels, each showing an attribute
-              $(go.Panel, "Vertical",
-                {
-                  name: "LIST",
-                  row: 1,
-                  padding: 0,
-                  alignment: go.Spot.TopLeft,
-                  defaultAlignment: go.Spot.Left,
-                  stretch: go.GraphObject.Horizontal,
-                  itemTemplate: itemTempl
-                },
-                new go.Binding("itemArray", "items"))
-            )  // end Table Panel
-          );  // end Node
+        diagram.nodeTemplate =
+          $(go.Node, "Auto", {
+            click: showConnections,
+            selectionAdorned: true,
+            resizable: true,
+            layoutConditions: go.Part.LayoutStandard & ~go.Part.LayoutNodeSized,
+            fromSpot: go.Spot.AllSides,
+            toSpot: go.Spot.AllSides,
+            isShadowed: false,
+            shadowColor: "#C5C1AA"
+          },
+          new go.Binding("location", "location").makeTwoWay(),
+          // whenever the PanelExpanderButton changes the visible property of the "LIST" panel,
+          // clear out any desiredSize set by the ResizingTool.
+          new go.Binding("desiredSize", "visible", function(v) { return new go.Size(NaN, NaN); }).ofObject("LIST"),
+          // define the node's outer shape, which will surround the Table
+          $(go.Shape, "Rectangle", { fill: '#f6f6f6', stroke: "#756875", strokeWidth: 1 }),
+          $(go.Panel, "Table",
+            { margin: 10, stretch: go.GraphObject.Fill },
+            $(go.RowColumnDefinition, { row: 0, sizing: go.RowColumnDefinition.None }),
+            // the table header
+            $(go.TextBlock,
+              {
+                row: 0, alignment: go.Spot.Center,
+                margin: new go.Margin(0, 14, 8, 2),  // leave room for Button
+                font: "bold 16px sans-serif"
+              },
+              new go.Binding("text", "key")),
+            // the collapse/expand button
+            $("PanelExpanderButton", "LIST",  // the name of the element whose visibility this button toggles
+              { row: 0, alignment: go.Spot.TopRight }),
+            // the list of Panels, each showing an attribute
+            $(go.Panel, "Vertical",
+              {
+                name: "LIST",
+                row: 1,
+                padding: 0,
+                alignment: go.Spot.TopLeft,
+                defaultAlignment: go.Spot.Left,
+                stretch: go.GraphObject.Horizontal,
+                itemTemplate: itemTempl
+              },
+              new go.Binding("itemArray", "items"))
+          )  // end Table Panel
+        );  // end Node
 
         // define the Link template, representing a relationship
-        myDiagram.linkTemplate =
+        diagram.linkTemplate =
           $(go.Link,  // the whole link panel
             {
               selectionAdorned: true,
@@ -107,7 +115,11 @@
               curve: go.Link.JumpOver
             },
             $(go.Shape,  // the link shape
-              { stroke: "#303B45", strokeWidth: 2.5 }),
+              { stroke: "#303B45", strokeWidth: 2.5 },
+              // the Shape.fill color depends on whether Link.isHighlighted is true
+              // the Shape.stroke color depends on whether Link.isHighlighted is true
+              new go.Binding("stroke", "isHighlighted", function (h) { return h ? "red" : "#303B45" }).ofObject()
+            ),
             $(go.TextBlock,  // the "from" label
               {
                 textAlign: "center",
@@ -130,17 +142,24 @@
               new go.Binding("text", "toText"))
           );
 
+        // when the user clicks on the background of the Diagram, remove all highlighting
+        diagram.click = function (e) {
+          diagram.startTransaction("no highlighteds");
+          diagram.clearHighlighteds();
+          diagram.commitTransaction("no highlighteds");
+        };
+
         // create the model for the E-R diagram
         var nodeDataArray = <%- tables %>;
         var linkDataArray = <%- relationships %>;
 
-        myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+        diagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
       }
     </script>
   </head>
   <body onload="init()">
     <div id="sample">
-      <div id="myDiagramDiv" style="background-color: white; border: solid 1px black; width: 100%; height: 700px"></div>
+      <div id="diagram" style="background-color: white; border: solid 1px black; width: 100%; height: 700px"></div>
     </div>
   </body>
 </html>
