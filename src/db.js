@@ -1,13 +1,13 @@
 const pgStructure = require('pg-structure');
 
 class DBStructure {
-  constructor({ 
-    host = '0.0.0.0', 
-    port = '5432', 
-    user = 'postgres', 
+  constructor({
+    host = '0.0.0.0',
+    port = '5432',
+    user = 'postgres',
     schemas = ['public'],
-    database = 'postgres', 
-    password = 'example', 
+    database = 'postgres',
+    password = 'example',
   }) {
     this.schemas = schemas;
     this.crendentials = {
