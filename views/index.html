@@ -26,7 +26,7 @@
           // remove any previous highlighting
           diagram.clearHighlighteds();
           // for each Link coming out of the Node, set Link.isHighlighted
-          node.findLinksOutOf().each(function (l) { l.isHighlighted = true; });
+          node.findLinksConnected().each(function (l) { l.isHighlighted = true; });
           diagram.commitTransaction("highlight");
         }
 
