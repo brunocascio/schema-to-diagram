@@ -28,7 +28,11 @@
               initialContentAlignment: go.Spot.Center,
               allowDelete: false,
               allowCopy: false,
-              layout: $(go.ForceDirectedLayout),
+              layout: $(go.LayeredDigraphLayout, {
+                direction: 90,
+                layerSpacing: 25,
+                columnSpacing: 25
+              }),
               "undoManager.isEnabled": true
             });
 
