@@ -36,10 +36,8 @@
           initialContentAlignment: go.Spot.Center,
           allowDelete: false,
           allowCopy: false,
-          layout: $(go.LayeredDigraphLayout, {
-            direction: 90,
-            layerSpacing: 25,
-            columnSpacing: 25
+          layout: $(go.GridLayout, {
+            cellSize: go.Size.parse("200 NaN")
           }),
           "undoManager.isEnabled": true
         });
@@ -61,11 +59,11 @@
           $(go.Node, "Auto", {
             click: showConnections,
             selectionAdorned: true,
-            resizable: true,
+            resizable: false,
             layoutConditions: go.Part.LayoutStandard & ~go.Part.LayoutNodeSized,
             fromSpot: go.Spot.AllSides,
             toSpot: go.Spot.AllSides,
-            isShadowed: false,
+            isShadowed: true,
             shadowColor: "#C5C1AA"
           },
           new go.Binding("location", "location").makeTwoWay(),
@@ -116,7 +114,6 @@
             },
             $(go.Shape,  // the link shape
               { stroke: "#303B45", strokeWidth: 2.5 },
-              // the Shape.fill color depends on whether Link.isHighlighted is true
               // the Shape.stroke color depends on whether Link.isHighlighted is true
               new go.Binding("stroke", "isHighlighted", function (h) { return h ? "red" : "#303B45" }).ofObject()
             ),
